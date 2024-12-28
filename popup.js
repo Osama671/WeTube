@@ -1,13 +1,16 @@
 function getYoutubeURL() {
   return new Promise((resolve, reject) => {
     chrome.storage.local.get("youtubeURL", (data) => {
-      console.log("Data:", data.youtubeURL);
-      resolve(data.youtubeURL);
+      if (data.youtubeURL) {
+        resolve(data.youtubeURL);
+      } else {
+        reject(null);
+      }
     });
   });
 }
 
-async function onClick() {
+async function createYoutubePage() {
   const youtubeURL = await getYoutubeURL();
   chrome.tabs.create({
     url: chrome.runtime.getURL("video.html" + `?URL=${youtubeURL}`),
@@ -15,7 +18,5 @@ async function onClick() {
 }
 
 document.getElementById("redirectButton").addEventListener("click", () => {
-  onClick();
+  createYoutubePage();
 });
-
-console.log("YOUTUBE URL: ", getYoutubeURL());
